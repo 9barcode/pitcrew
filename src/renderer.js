@@ -8,8 +8,8 @@ export class Broadcast {
  if(ready(this.background)){const im=this.background;const scale=Math.max(w/im.naturalWidth,h/im.naturalHeight)*zoom,iw=im.naturalWidth*scale,ih=im.naturalHeight*scale;g.drawImage(im,(w-iw)/2+pan,(h-ih)*.65,iw,ih);}else{g.fillStyle='#56616d';g.fillRect(0,0,w,h);}
  const cars=shot.ids.map(id=>r.cars[id]);const average=cars.length?cars.reduce((s,c)=>s+c.distance,0)/cars.length:r.player.distance;this.focus=this.focus===null?average:this.focus+(average-this.focus)*(1-Math.exp(-dt*7));
  const layouts=cars.map((car,i)=>{const d=car.distance-this.focus;const lane=car.id===0?1:0;
- if(close){return {car,x:w*.51+d*w*.004,y:h*(lane?.99:.73),height:h*(lane?.72:.56),angled:false};}
- const depth=Math.max(.12,Math.min(.95,.55+d/210));return {car,x:w*(.84-depth*.58)+(lane?w*.055:-w*.035),y:h*(.34+depth*.66)+(lane?h*.06:-h*.035),height:h*(.23+depth*.56),angled:true};});
+ if(close){return {car,x:w*.51+d*w*.004,y:h*(lane?.99:.86),height:h*(lane?.83:.70),angled:false};}
+ const depth=Math.max(.12,Math.min(.95,.55+d/210));return {car,x:w*(.84-depth*.58)+(lane?w*.09:-w*.065),y:h*(lane?.98:.86),height:h*Math.min(lane?.80:.67,(.23+depth*.56)*1.45),angled:true};});
  layouts.sort((a,b)=>a.y-b.y);for(const v of layouts){this.drawVehicle(g,v,r.time,close);}
  if(shot.kind==='finish'){g.save();g.translate(w*.3,h*.5);g.rotate(-.2);for(let i=0;i<4;i++)for(let j=0;j<6;j++){g.fillStyle=(i+j)%2?'#f2eee2':'#172133';g.fillRect(i*5,j*5,5,5);}g.restore();}
  // Restrained TV graphics outside the action, one label for the locked battle.
