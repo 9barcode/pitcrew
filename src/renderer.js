@@ -6,12 +6,12 @@ export class Broadcast {
  constructor(canvas,map){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.map=map;this.mode=0;this.highlights=new Highlights;this.images=TEAM_ASSETS.map(n=>load(`assets/cars/${n}.webp`));this.angled=TEAM_ASSETS.map(n=>load(`assets/cars/${n}-angle.webp`));this.overtake=OVERTAKE_TEAMS.map(n=>load(`assets/cars/${n}-overtake.webp`));this.background=load('assets/broadcast/corner.webp');this.focus=null;this.lastTime=0;this.key='';this.cutAt=0;}
  render(r){const c=this.canvas,g=this.ctx,w=c.clientWidth,h=c.clientHeight,dpr=Math.min(devicePixelRatio||1,2);if(c.width!==w*dpr||c.height!==h*dpr){c.width=w*dpr;c.height=h*dpr;}g.setTransform(dpr,0,0,dpr,0,0);const shot=this.highlights.select(r);this.shot=shot;const key=shot.kind+shot.ids.join(',');if(key!==this.key||r.time<this.lastTime){this.cutAt=r.time;this.focus=null;this.key=key;}
  const dt=Math.max(0,Math.min(.1,r.time-this.lastTime));this.lastTime=r.time;
- const animation=overtakeAnimation(r,shot);const age=r.time-this.cutAt;const close=animation?animation.phase==='alongside':shot.kind==='battle'&&age>2.6&&age<5.6;const zoom=close?1.34:1.16;const moving=r.player.state==='service'?0:r.player.distance;const pan=Math.sin(moving*.012)*w*.045;
- if(ready(this.background)){const im=this.background;const scale=Math.max(w/im.naturalWidth,h/im.naturalHeight)*zoom,iw=im.naturalWidth*scale,ih=im.naturalHeight*scale;g.drawImage(im,(w-iw)/2+pan,(h-ih)*.65,iw,ih);}else{g.fillStyle='#56616d';g.fillRect(0,0,w,h);}
+ const animation=overtakeAnimation(r,shot);const age=r.time-this.cutAt;const close=animation?animation.phase==='alongside':shot.kind==='battle'&&age>2.6&&age<5.6;const zoom=close?1.12:1.03;const moving=r.player.state==='service'?0:r.player.distance;const pan=Math.sin(moving*.012)*w*.012;
+ if(ready(this.background)){const im=this.background;const scale=Math.max(w/im.naturalWidth,h/im.naturalHeight)*zoom,iw=im.naturalWidth*scale,ih=im.naturalHeight*scale;g.drawImage(im,(w-iw)/2+pan,(h-ih)*.38,iw,ih);}else{g.fillStyle='#56616d';g.fillRect(0,0,w,h);}
  const cars=shot.ids.map(id=>r.cars[id]);const average=cars.length?cars.reduce((s,c)=>s+c.distance,0)/cars.length:r.player.distance;this.focus=this.focus===null?average:this.focus+(average-this.focus)*(1-Math.exp(-dt*7));
  const layouts=cars.map((car,i)=>{const d=car.distance-this.focus;const lane=car.id===0?1:0;
- if(close){return {car,x:w*.51+d*w*.004,y:h*(lane?.99:.86),height:h*(lane?.83:.70),angled:false};}
- const depth=Math.max(.12,Math.min(.95,.55+d/210));return {car,x:w*(.84-depth*.58)+(lane?w*.09:-w*.065),y:h*(lane?.98:.86),height:h*Math.min(lane?.80:.67,(.23+depth*.56)*1.45),angled:true};});
+ if(close){return {car,x:w*.51+d*w*.004,y:h*(lane?.99:.94),height:h*(lane?.96:.87),angled:false};}
+ const depth=Math.max(.12,Math.min(.95,.55+d/210));return {car,x:w*(.84-depth*.58)+(lane?w*.09:-w*.065),y:h*(lane?.99:.94),height:h*Math.min(lane?.96:.88,(.23+depth*.56)*1.8),angled:true};});
  layouts.sort((a,b)=>a.y-b.y);for(const v of layouts){if(animation){this.drawOvertakeVehicle(g,v,r,animation,w,h);}else{this.drawVehicle(g,v,r.time,close);}}
  if(shot.kind==='finish'){g.save();g.translate(w*.3,h*.5);g.rotate(-.2);for(let i=0;i<4;i++)for(let j=0;j<6;j++){g.fillStyle=(i+j)%2?'#f2eee2':'#172133';g.fillRect(i*5,j*5,5,5);}g.restore();}
  // Restrained TV graphics outside the action, one label for the locked battle.
@@ -22,8 +22,8 @@ export class Broadcast {
  drawOvertakeVehicle(g,v,r,animation,w,h){const car=v.car,im=this.overtake[car.id];if(!im||!ready(im)){this.drawVehicle(g,v,r.time,animation.phase==='alongside');return;}
  const rect=OVERTAKE_RECTS[car.id][animation.row][animation.frame];const cw=rect.w,ch=rect.h;
  const relative=car.distance-r.player.distance;const lane=car.id===0?1:0;
- const x=w*.53-relative*w*.003+(animation.phase==='alongside'?0:lane?w*.06:-w*.06);
- const side=animation.phase==='alongside';const height=h*(side?(lane?.56:.46):(lane?.80:.67)),width=height*cw/ch,y=h*(lane?.99:side?.68:.85);
+ const x=w*.52-relative*w*.003+(lane?w*.09:-w*.09);
+ const side=animation.phase==='alongside';const height=h*(side?(lane?.92:.82):(lane?.96:.88)),width=height*cw/ch,y=h*(lane?.99:.93);
  g.save();g.fillStyle='#10203355';g.filter='blur(2px)';g.beginPath();g.ellipse(x,y-2,width*.38,height*.055,0,0,7);g.fill();g.filter='none';
  g.drawImage(im,rect.x,rect.y,cw,ch,x-width/2,y-height,width,height);g.restore();
  }
