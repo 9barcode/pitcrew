@@ -1,0 +1,9 @@
+{
+  "name": "pitcrew-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "test": "node --test tests/*.test.js"
+  }
+}

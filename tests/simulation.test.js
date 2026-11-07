@@ -1,0 +1,7 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {Race,LENGTH,LAPS,location} from '../src/simulation.js';
+function run(delay){const r=new Race(delay);for(let i=0;i<24000&&!r.done;i++)r.step(1/60);return r;}
+test('all six cars finish and every car receives service',()=>{const r=run(0);assert.ok(r.done);assert.equal(r.order.length,6);for(const c of r.cars){assert.ok(c.pitted);assert.equal(c.distance,LENGTH*LAPS);assert.ok(Number.isFinite(location(c).x));}for(let i=1;i<6;i++)assert.ok(r.order[i].finishTime>=r.order[i-1].finishTime);});
+test('two seconds of service delay worsen actual finish time',()=>{const a=run(0),b=run(2);assert.ok(b.player.finishTime-a.player.finishTime>1.8);assert.ok(b.rank>=a.rank);});
+test('service holds distance while opponents continue moving',()=>{const r=new Race;r.requestPit();while(r.player.state!=='service')r.step(1/60);const d=r.player.distance,other=r.cars[1].distance;r.step(.5);assert.equal(r.player.distance,d);assert.ok(r.cars[1].distance>other);});
+test('live rank always comes from race progress',()=>{const r=new Race;for(let i=0;i<9000;i++){r.step(1/60);for(let j=1;j<r.order.length;j++){const a=r.order[j-1],b=r.order[j];if(a.finishTime===null&&b.finishTime===null)assert.ok(a.distance>=b.distance);}}});
+test('live delay extends current service and restart is deterministic',()=>{const r=new Race;while(r.player.state!=='service')r.step(1/60);const t=r.player.serviceTotal;r.addDelay();assert.equal(r.player.serviceTotal,t+2);assert.equal(run(0).player.finishTime,run(0).player.finishTime);});
