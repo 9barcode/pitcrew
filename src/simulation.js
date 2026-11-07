@@ -2,11 +2,12 @@ export const LENGTH=1800, LAPS=3, ENTRY=.66*LENGTH, BOX=.75*LENGTH, EXIT=.86*LEN
 const names=['앰버 폭스','블루 코멧','크림슨 볼트','실버 헤론','노바 펄스','아이언 클로버'];
 const colors=['#ffbc42','#4cb8ff','#ff616e','#d8e6ee','#b68aff','#6cdbb1'];
 export class Race {
- constructor(delay=0){this.time=0;this.done=false;this.events=[];this.delay=delay;this.cars=names.map((name,i)=>({id:i,name,color:colors[i],distance:-i*9,speed:0,state:'track',pitRequested:false,pitted:false,service:0,serviceTotal:0,finishTime:null,tyre:1,lane:0,base:83-i*.22}));this.order=[...this.cars];}
+ constructor(delay=0){this.time=0;this.done=false;this.passes=[];this.events=[];this.delay=delay;this.cars=names.map((name,i)=>({id:i,name,color:colors[i],distance:(i===0?-18:i===1?0:i===2?-9:-i*9),speed:0,state:'track',pitRequested:false,pitted:false,service:0,serviceTotal:0,finishTime:null,tyre:1,lane:0,base:83-i*.22}));this.order=[...this.cars];}
  requestPit(){const c=this.cars[0];if(c.pitted||c.state!=='track'||this.done)return false;c.pitRequested=true;return true;}
  addDelay(){const c=this.cars[0];if(this.done||c.pitted)return false;this.delay+=2;if(c.state==='service')c.serviceTotal+=2;return true;}
  event(text){this.events.unshift({time:this.time,text});this.events.length=Math.min(this.events.length,8);}
  step(dt){if(this.done)return;this.time+=dt;
+ const before=this.cars.map(c=>c.distance);
  const leaders=[...this.cars].sort((a,b)=>b.distance-a.distance);
  for(const c of this.cars){if(c.finishTime!==null)continue;const pos=((c.distance%LENGTH)+LENGTH)%LENGTH,lap=Math.floor(Math.max(0,c.distance)/LENGTH);
  if(!c.pitted&&lap>=1)c.pitRequested=true;
@@ -15,7 +16,7 @@ export class Race {
  let target=c.state==='track'?c.base*(corner?.72:1)*(0.92+.08*c.tyre):30;
  let lane=0;
  if(c.state==='track'){
- const front=leaders.find(o=>o!==c&&o.state==='track'&&o.distance>c.distance&&o.distance-c.distance<24);
+ const front=[...leaders].reverse().find(o=>o!==c&&o.state==='track'&&o.distance>c.distance&&o.distance-c.distance<24);
  if(front){if(!corner){lane=1;target+=2;}else{target=Math.min(target,Math.max(25,front.speed));}}
  // Pit exit yields to traffic in the merge zone instead of teleporting through it.
  }
@@ -30,6 +31,13 @@ export class Race {
  if(c.distance>=LENGTH*LAPS){const over=c.distance-LENGTH*LAPS;c.finishTime=this.time-over/Math.max(1,c.speed);c.distance=LENGTH*LAPS;c.speed=0;c.state='finished';this.event(`${c.name} 완주`);}
  }
  this.order=[...this.cars].sort((a,b)=>a.finishTime!==null&&b.finishTime!==null?a.finishTime-b.finishTime:a.finishTime!==null?-1:b.finishTime!==null?1:b.distance-a.distance);
+ for(const opponent of this.cars.slice(1)){
+ const old=before[0]-before[opponent.id],now=this.player.distance-opponent.distance;
+ if(this.player.state==='track'&&opponent.state==='track'&&this.player.finishTime===null&&opponent.finishTime===null&&old*now<0){
+ const pass={time:this.time,carId:opponent.id,direction:now>0?'overtake':'passed'};this.passes.unshift(pass);this.passes.length=Math.min(this.passes.length,12);
+ this.event(`${now>0?'추월 완료':'순위 하락'} · ${opponent.name}`);
+ }
+ }
  this.done=this.cars.every(c=>c.finishTime!==null);
  }
  get player(){return this.cars[0];}
@@ -38,3 +46,6 @@ export class Race {
 // One world-position function drives broadcast and minimap. Pit progress uses the
 // same race-distance coordinate as the main route, so no merge-position jump occurs.
 export function location(c){const a=c.distance/LENGTH*Math.PI*2;const pit=c.state.startsWith('pit')||c.state==='service';const p=((c.distance%LENGTH)+LENGTH)%LENGTH;const blend=pit?Math.max(0,Math.min(1,(p-ENTRY)/55,(EXIT-p)/55)):0;const r=110-blend*19-c.lane*6;return {x:Math.cos(a)*r,y:0,z:Math.sin(a)*(75-blend*19),heading:Math.atan2(75*Math.cos(a),-110*Math.sin(a)),pit};}
+
+// Broadcast uses the actual opponent object, never a separately selected artwork.
+export function cockpitCars(race){const player=race.player;return race.cars.filter(c=>c.id!==0&&c.state==='track'&&c.finishTime===null&&player.state==='track').map(c=>{let gap=c.distance-player.distance;gap=((gap+LENGTH/2)%LENGTH+LENGTH)%LENGTH-LENGTH/2;return {car:c,gap,relativeLane:c.lane-player.lane};}).filter(v=>v.gap>-18&&v.gap<230).sort((a,b)=>b.gap-a.gap);}
