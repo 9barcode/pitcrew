@@ -1,16 +1,27 @@
-# 《피트에서 정상까지》 캐릭터 설정집 v1
+# 《피트에서 정상까지》 캐릭터 설정집 v2 — 승인 시안 인체 비율 기준
 
 > 확정 편성: 여성 25명 / 남성 5명, SS·SA·S·A·B·C 각 5명, 총 30명. 운영 팀 6개. 이 문서는 **설정 및 프레임 제작 명세**이며 실제 PNG 스프라이트 시트가 생성되었다는 뜻은 아니다.
 
-## 제작 공통 규격
-- 모든 캐릭터의 고정 마스터 원화(정면·좌·우·후면), 표정(기본·집중·성공·실수), 전신 SD 약 2.7등신. 팀 유니폼은 캐릭터 전신과 일체형으로 렌더링하고 조각 오버레이를 금지.
-- **6팀 × 30명 = 180종 팀별 전신 외형**. 캐릭터 원형/얼굴은 팀이 바뀌어도 동일. 팀별 색상·엠블럼·복장만 변경.
-- 스프라이트 시트 **권장**: 각 셀 256×256 투명 RGBA, 행=애니메이션, 열=프레임; 프레임별 발 기준점 (128,232), 시점·그림자·카메라 스케일 고정. 실제 해상도·FPS는 5인 파일럿 검증 후 확정.
-- 필수 상태: idle(6프레임), walk(8), ready(4), job_start(4), job_loop(8), job_finish(4), success(6), mistake(6), victory(6). **총 52프레임/캐릭터·팀·기본 방향**, 일반/긴급 정비 분기는 추가 시트로 분리. 8~12FPS 기준 시작, 작업 시간과 애니메이션 루프 횟수 분리.
-- 상태별 별도 PNG 또는 아틀라스 JSON. 네이밍: `assets/characters/{character_id}/{team_id}/{state}.png`; 각 시트 프레임 순서·원점·히트박스는 동일 규약.
-- 작업 전환은 차량 정지→잭 상승→타이어/진단/기계 병렬 작업→잭 하강→안전 확인→릴리스. 작업별 선후행 조건을 무시한 동작 금지.
-- **검수**: 손·발 개수, 좌우 다리 교대, 접지, 공구/손 연결, 유니폼 로고/주름, 얼굴 일관성, 프레임 누출, 알파 가장자리, 작업 위치 고정. 윤나리는 승인 원화 변경 금지.
-- **제작 순서**: 1팀 5인 기본 상태/작업 프레임 파일럿 → 검수 → 30인 1팀 → 6팀 전체 확장. 180×52=9,360 기본 방향 프레임(추가 방향·긴급 정비 제외)이므로 자동 일괄 생성 전에 기준 시트를 확정한다.
+## 미술 기준 — 최우선 확정
+- **SD·치비·2.7등신·과장된 대두 비율 전면 폐기.** 기존 사용자가 승인한 **가로형 레이스/정비장 메인 시안의 자연스러운 인체 비율과 세련된 반실사 애니메이션 일러스트**를 유일한 기준으로 한다.
+- 신체 비율은 승인 원화의 실측을 기준으로 캐릭터별 고정한다. 임의의 7~8등신 통일도 금지하며 원화의 얼굴·체격·팔다리 길이·의복 실루엣을 보존한다.
+- 그림체: 세밀한 붓질, 입체적인 광원, 절제된 윤곽선, 자연스러운 작업복 주름. SD로 재해석하거나 별도 귀여운 버전을 만드는 것은 제작 범위에서 제외.
+- **윤나리**: 승인된 기존 원화의 얼굴, 검은 머리, 은색 머리핀 두 개, 나른한 눈매, 체형을 기준. 최근 제작한 SD 콘셉트 보드는 **폐기된 참고자료**이며 원화로 채택하지 않는다.
+- 국적은 인물의 배경이며 능력치 보정 요소가 아니다. 여성 25명·남성 5명과 기존 30명 명단·직무·고유 스킬 콘셉트를 유지한다.
+
+## 실제 인게임 애니메이션 시트 제작 규격
+- 캐릭터별 **기준 전신 원화(정면·좌·우·후면)**를 먼저 확정하고, 그 인체 비율 그대로 프레임 애니메이션을 제작한다. 원화와 시트의 얼굴·신체·유니폼 비율이 일치해야 한다.
+- **6팀 × 30명 = 180종 팀별 완성형 외형**. 의복은 몸에 붙이는 PNG 오버레이가 아니라 유니폼을 입은 상태로 통합 렌더링한다. 팀이 바뀌어도 얼굴·체형·헤어는 고정.
+- 권장 파일 형식: 각 상태별 투명 배경 RGBA PNG 시트 + 프레임 메타데이터 JSON. 셀 크기·실제 픽셀 해상도는 승인 시안의 게임 화면 내 캐릭터 표시 크기를 측정한 후 정한다. **기존 256×256 셀, 발 기준점 (128,232), 2.7등신 규격은 사용 금지**.
+- 캐릭터별 고정 기준점: 양발 접지 중심 또는 역할별 접지점, 월드 좌표와 카메라 스케일 일정. 큰 자세 변화는 캐릭터가 셀 밖으로 잘리지 않도록 공통 캔버스/피벗 설계.
+- 애니메이션 상태: `idle`(6), `walk`(8), `ready`(4), `job_start`(4), `job_loop`(8), `job_finish`(4), `success`(6), `mistake`(6), `victory`(6) = **기본 방향 52프레임(초기 예산안)**. 실제 동작별 필요한 프레임 수와 FPS는 자연스러운 재생 테스트 후 조정.
+- 시점: 정면/좌/우/후면 기본 원화. 실제 인게임 정비 카메라에서 필요한 작업 방향만 우선 애니메이션화하며, 좌우 비대칭 로고·공구·손잡이는 무조건 미러링하지 않는다.
+- `job_loop`는 **역할별 실제 작업 콘티**를 따른다. 타이어: 휠건·타이어 취급, 리프트: 잭 조작, 기계: 상태 확인·경미 조정, 진단·전략: 태블릿/계기 확인, 안전: 작업 완료 확인·릴리스. 윤나리의 긴급 정비는 별도 `job_emergency_*.png` 시퀀스.
+- 차량 정지→잭 상승→병렬 작업→잭 하강→안전 확인→릴리스의 선후행을 게임 상태와 연동한다. 동작 루프 횟수와 작업 시간은 별도 관리해 빠른 작업에서 프레임만 비정상적으로 가속하지 않는다.
+- 저장 경로: `assets/characters/{character_id}/{team_id}/{state}.png` 및 같은 이름의 `.json` 메타데이터. 메타데이터에 프레임 사각형, 순서, 피벗, FPS, 이벤트(공구 접촉/완료 신호)를 포함한다.
+- 검수: 얼굴·머리·체형·유니폼 일관성, 팔·다리 개수, 관절과 발 접지, 공구/차량 접촉, 시점 전환, 프레임 간 스케일·좌표, 알파 경계, 자연스러운 재생. **원화 비교와 실제 인게임 재생 둘 다 통과**해야 완료.
+- 제작 순서: 승인 원화 기준 **앰버 폭스 5인 파일럿**(분야별 1명) → 프레임 재생 검수 → 30명 1팀 → 6팀 전체. 기본 방향 180×52=9,360프레임은 단순 예산 추정치이며 방향·추가 동작은 별도.
+- **현 상태**: 본 문서는 캐릭터 설정과 제작 명세다. 실제 투명 PNG 시트, JSON, 인게임 애니메이션 적용은 아직 제작·검증되지 않았다.
 
 ## 30명 개별 설정
 
@@ -20,7 +31,7 @@
 - **성격**: 완벽주의·침착. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「제로 딜레이」 — 타이어 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 휠건을 짧게 회전시켜 체결→토크 확인. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: DEX/PWR/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 02. 마커스 리드 / Marcus Reed — SS
@@ -29,7 +40,7 @@
 - **성격**: 과묵·현장 지휘. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「퍼펙트 리프트」 — 리프트 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 잭 손잡이를 정확히 밀어 올리고 손짓으로 인계. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: PWR/ACC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 03. 클레어 뒤부아 / Claire Dubois — SS
@@ -38,7 +49,7 @@
 - **성격**: 독립적·냉철. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「마스터 리페어」 — 기계 정비 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 진단 패널 확인→렌치 미세 조정→부품 검수. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/DEX/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 04. 빅토리아 하트만 / Victoria Hartmann — SS
@@ -47,7 +58,7 @@
 - **성격**: 논리적·철저. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「프리딕티브 피트」 — 진단·전략 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 태블릿 데이터 스와이프→상황 판독→신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/FOC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 05. 한이솔 / Han Isol — SS
@@ -56,7 +67,7 @@
 - **성격**: 엄격·책임감. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「클리어 릴리스」 — 릴리스·안전 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 정비 구역 양측 확인→수신호→릴리스. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: SYN/ACC/FOC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 06. 이하진 / Lee Hajin — SA
@@ -65,7 +76,7 @@
 - **성격**: 승부욕·직진형. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「퀵 체인지」 — 타이어 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 휠건 빠른 탈착→교체 타이어 정렬. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: DEX/PWR/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 07. 루카 모레티 / Luca Moretti — SA
@@ -74,7 +85,7 @@
 - **성격**: 유쾌·순발력. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「파워 잭」 — 리프트 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 잭 삽입→상승→엄지 신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: PWR/ACC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 08. 에밀리 첸 / Emily Chen — SA
@@ -83,7 +94,7 @@
 - **성격**: 호기심·집중형. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「정밀 조정」 — 기계 정비 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 센서 접속→게이지 확인→나사 조정. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/DEX/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 09. 미나 사토 / Mina Sato — SA
@@ -92,7 +103,7 @@
 - **성격**: 차분·계획형. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「골든 타이밍」 — 진단·전략 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 헤드셋 터치→타이밍 표시→작업 지시. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/FOC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 10. 다니엘라 로시 / Daniela Rossi — SA
@@ -101,7 +112,7 @@
 - **성격**: 사교적·단호. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「세이프 가드」 — 릴리스·안전 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 피트레인 시야 확인→팔 들어 정지/출발 신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: SYN/ACC/FOC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 11. 고은채 / Go Eunchae — S
@@ -110,7 +121,7 @@
 - **성격**: 활발·노력형. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「리듬 체결」 — 타이어 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 박자감 있는 휠건 체결→볼트 확인. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: DEX/PWR/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 12. 레오 베넷 / Leo Bennett — S
@@ -119,7 +130,7 @@
 - **성격**: 성실·수줍음. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「안정 지지」 — 리프트 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 잭 위치 확인→안정적으로 상승. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: PWR/ACC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 13. 윤나리 / Yoon Nari — S
@@ -128,7 +139,7 @@
 - **성격**: 나른해 보여도 예리함. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「이상 징후 포착」 — 기계 정비 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 일반: 계기 확인→경미 조정; 긴급: 고장 진단→부품 교체. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/DEX/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 14. 소피아 뮐러 / Sofia Müller — S
@@ -137,7 +148,7 @@
 - **성격**: 분석적·다정. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「데이터 리딩」 — 진단·전략 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 태블릿 경고 탐지→파형 비교→신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/FOC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 15. 올리비아 윌슨 / Olivia Wilson — S
@@ -146,7 +157,7 @@
 - **성격**: 침착·팀 중심. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「팀 싱크」 — 릴리스·안전 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 동료 작업 상태 순서 확인→릴리스. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: SYN/ACC/FOC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 16. 카밀라 산토스 / Camila Santos — A
@@ -155,7 +166,7 @@
 - **성격**: 명랑·경쟁적. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「빠른 손놀림」 — 타이어 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 휠건 체결→자세 낮춰 재확인. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: DEX/PWR/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 17. 김재민 / Kim Jaemin — A
@@ -164,7 +175,7 @@
 - **성격**: 낙천·꾸준. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「기초 리프트」 — 리프트 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 잭 위치 정렬→안정 상승. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: PWR/ACC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 18. 유키 타나카 / Yuki Tanaka — A
@@ -173,7 +184,7 @@
 - **성격**: 호기심·꼼꼼. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「기초 점검」 — 기계 정비 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 센서 연결→표시등 확인→메모. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/DEX/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 19. 에블린 브룩스 / Evelyn Brooks — A
@@ -182,7 +193,7 @@
 - **성격**: 재치·신속. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「체크리스트」 — 진단·전략 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 체크리스트 넘김→상태 표시. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/FOC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 20. 이사벨 가르시아 / Isabel García — A
@@ -191,7 +202,7 @@
 - **성격**: 엄정·침착. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「안전 신호」 — 릴리스·안전 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 피트레인 확인→안전 신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: SYN/ACC/FOC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 21. 송지후 / Song Jihu — B
@@ -200,7 +211,7 @@
 - **성격**: 열정·초보. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「기초 체결」 — 타이어 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 휠건 잡기→체결→확인. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: DEX/PWR/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 22. 테오 마르탱 / Théo Martin — B
@@ -209,7 +220,7 @@
 - **성격**: 장난기·집중. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「힘 조절」 — 리프트 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 잭 중심 맞춤→상승. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: PWR/ACC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 23. 아멜리아 클라크 / Amelia Clarke — B
@@ -218,7 +229,7 @@
 - **성격**: 조심성·학구적. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「꼼꼼한 확인」 — 기계 정비 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 커넥터 점검→토크 확인. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/DEX/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 24. 프리야 샤르마 / Priya Sharma — B
@@ -227,7 +238,7 @@
 - **성격**: 논리적·신중. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「기록 분석」 — 진단·전략 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 기록 비교→진단 결과 표시. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/FOC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 25. 엘라 요한손 / Ella Johansson — B
@@ -236,7 +247,7 @@
 - **성격**: 차분·협력적. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「확인 완료」 — 릴리스·안전 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 동료 확인→짧은 수신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: SYN/ACC/FOC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 26. 조하린 / Jo Harin — C
@@ -245,7 +256,7 @@
 - **성격**: 덜렁·성장형. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「첫 체결」 — 타이어 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 공구 자세 잡기→천천히 체결. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: DEX/PWR/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 27. 마리아 실바 / Maria Silva — C
@@ -254,7 +265,7 @@
 - **성격**: 성실·신중. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「기초 지지」 — 리프트 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 잭 삽입 위치 점검→상승. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: PWR/ACC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 28. 하나 코바야시 / Hana Kobayashi — C
@@ -263,7 +274,7 @@
 - **성격**: 호기심·소심. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「부품 확인」 — 기계 정비 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 부품 번호 대조→표시등 확인. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/DEX/ACC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 29. 루시아 페레이라 / Lucia Ferreira — C
@@ -272,7 +283,7 @@
 - **성격**: 적극·배움형. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「기록 습관」 — 진단·전략 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 노트 기록→태블릿 대조. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: INT/FOC/SYN 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
 ### 30. 올리비아 그린 / Olivia Green — C
@@ -281,6 +292,6 @@
 - **성격**: 낙천·신중. 작업 완료·실수·승리 표정은 성격에 맞게 차별화.
 - **고유 스킬**: 「신호 연습」 — 릴리스·안전 관련 작업 특화. 발동 확률·시간 단축·쿨타임·레벨별 강화량은 밸런스 테스트 전 미확정.
 - **전용 작업 시트 콘티**: 작업 완료 표시 확인→릴리스 신호. ready→job_start→job_loop→job_finish에서 공구 접촉·차량 부위·안전 동선 일치.
-- **기본 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
+- **제작 대상 시트 목록**: `idle.png`, `walk.png`, `ready.png`, `job_start.png`, `job_loop.png`, `job_finish.png`, `success.png`, `mistake.png`, `victory.png` (각 팀별 제작 대상; 현재 미생성).
 - **능력치 방향**: SYN/ACC/FOC 중심. 6종 스탯 수치·성장곡선은 추후 수치화.
 
