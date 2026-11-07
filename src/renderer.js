@@ -1,3 +1,4 @@
+import {drawTireContacts} from './vehicle-grounding.js';
 import {OVERTAKE_RECTS} from './overtake-assets.js';
 import {overtakeAnimation,OVERTAKE_TEAMS} from './overtake-animation.js';
 import {location} from './simulation.js';import {Highlights,TEAM_ASSETS} from './highlights.js';
@@ -7,7 +8,7 @@ export class Broadcast {
  render(r){const c=this.canvas,g=this.ctx,w=c.clientWidth,h=c.clientHeight,dpr=Math.min(devicePixelRatio||1,2);if(c.width!==w*dpr||c.height!==h*dpr){c.width=w*dpr;c.height=h*dpr;}g.setTransform(dpr,0,0,dpr,0,0);const shot=this.highlights.select(r);this.shot=shot;const key=shot.kind+shot.ids.join(',');if(key!==this.key||r.time<this.lastTime){this.cutAt=r.time;this.focus=null;this.key=key;}
  const dt=Math.max(0,Math.min(.1,r.time-this.lastTime));this.lastTime=r.time;
  const animation=overtakeAnimation(r,shot);const age=r.time-this.cutAt;const close=animation?animation.phase==='alongside':shot.kind==='battle'&&age>2.6&&age<5.6;const zoom=close?1.12:1.03;const moving=r.player.state==='service'?0:r.player.distance;const pan=Math.sin(moving*.012)*w*.012;
- if(ready(this.background)){const im=this.background;const scale=Math.max(w/im.naturalWidth,h/im.naturalHeight)*zoom,iw=im.naturalWidth*scale,ih=im.naturalHeight*scale;g.drawImage(im,(w-iw)/2+pan,(h-ih)*.38,iw,ih);}else{g.fillStyle='#56616d';g.fillRect(0,0,w,h);}
+ if(ready(this.background)){const im=this.background;const scale=Math.max(w/im.naturalWidth,h/im.naturalHeight)*zoom,iw=im.naturalWidth*scale,ih=im.naturalHeight*scale;g.drawImage(im,(w-iw)/2+pan,(h-ih)*.38-h*.22,iw,ih);}else{g.fillStyle='#56616d';g.fillRect(0,0,w,h);}
  const cars=shot.ids.map(id=>r.cars[id]);const average=cars.length?cars.reduce((s,c)=>s+c.distance,0)/cars.length:r.player.distance;this.focus=this.focus===null?average:this.focus+(average-this.focus)*(1-Math.exp(-dt*7));
  const layouts=cars.map((car,i)=>{const d=car.distance-this.focus;const lane=car.id===0?1:0;
  if(close){return {car,x:w*.51+d*w*.004,y:h*(lane?.99:.94),height:h*(lane?.96:.87),angled:false};}
@@ -24,11 +25,11 @@ export class Broadcast {
  const relative=car.distance-r.player.distance;const lane=car.id===0?1:0;
  const x=w*.52-relative*w*.003+(lane?w*.09:-w*.09);
  const side=animation.phase==='alongside';const height=h*(side?(lane?.92:.82):(lane?.96:.88)),width=height*cw/ch,y=h*(lane?.99:.93);
- g.save();g.fillStyle='#10203355';g.filter='blur(2px)';g.beginPath();g.ellipse(x,y-2,width*.38,height*.055,0,0,7);g.fill();g.filter='none';
+ g.save();drawTireContacts(g,car.id,animation.row,x-width/2,y-height,width,height);
  g.drawImage(im,rect.x,rect.y,cw,ch,x-width/2,y-height,width,height);g.restore();
  }
  drawVehicle(g,v,time,close){const {car,x,y,height,angled}=v;const im=angled?this.angled[car.id]:this.images[car.id];if(!ready(im))return;const sourceH=angled?im.naturalHeight:im.naturalHeight/3;const width=height*im.naturalWidth/sourceH;const frame=0;
- g.save();g.fillStyle='#0e192e55';g.filter='blur(2px)';g.beginPath();g.ellipse(x,y-height*.05,width*.36,height*.055,0,0,7);g.fill();g.filter='none';
+ g.save();drawTireContacts(g,0,angled?0:1,x-width/2,y-height,width,height);
  // Minimal fore/aft ghost only in the close tracked shot, never a different team.
  if(close&&car.speed>30){g.globalAlpha=.07;g.drawImage(im,0,frame*sourceH,im.naturalWidth,sourceH,x-width/2-5,y-height,width,height);g.globalAlpha=1;}
  g.drawImage(im,0,frame*sourceH,im.naturalWidth,sourceH,x-width/2,y-height,width,height);g.restore();
