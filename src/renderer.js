@@ -16,8 +16,8 @@ export class Broadcast {
  layouts.sort((a,b)=>a.y-b.y);for(const v of layouts){if(animation){this.drawOvertakeVehicle(g,v,r,animation,w,h);}else{this.drawVehicle(g,v,r.time,close);}}
  if(shot.kind==='finish'){g.save();g.translate(w*.3,h*.5);g.rotate(-.2);for(let i=0;i<4;i++)for(let j=0;j<6;j++){g.fillStyle=(i+j)%2?'#f2eee2':'#172133';g.fillRect(i*5,j*5,5,5);}g.restore();}
  // Restrained TV graphics outside the action, one label for the locked battle.
- const pass=r.passes.find(p=>shot.ids.includes(p.carId)&&r.time-p.time<2);g.textAlign='right';g.font=`bold ${Math.max(8,Math.min(11,h*.11))}px Arial`;g.fillStyle='#122034d9';g.fillRect(w-230,3,225,19);g.fillStyle='#e8edf4';g.fillText(pass?`${pass.direction==='overtake'?'추월 완료':'피추월'} · ${r.cars[pass.carId].name}`:shot.label,w-10,16);
- g.font='8px Arial';g.fillStyle='#d9e0e8';g.fillText(animation?({approach:'접근 · FRONT TRACKING',alongside:'병주 · SIDE TRACKING',departure:'추월 완료 · REAR TRACKING'}[animation.phase]):close?'TELEPHOTO · TRACKING':'TRACKSIDE · CORNER',w-10,h-7);
+ const pass=r.passes.find(p=>shot.ids.includes(p.carId)&&r.time-p.time<2);g.textAlign='right';g.font=`bold ${Math.max(8,Math.min(11,h*.11))}px PitCrew`;g.fillStyle='#122034d9';g.fillRect(w-230,3,225,19);g.fillStyle='#e8edf4';g.fillText(pass?`${pass.direction==='overtake'?'추월 완료':'피추월'} · ${r.cars[pass.carId].name}`:shot.label,w-10,16);
+ g.font='8px PitCrew';g.fillStyle='#d9e0e8';g.fillText(animation?({approach:'접근 · FRONT TRACKING',alongside:'병주 · SIDE TRACKING',departure:'추월 완료 · REAR TRACKING'}[animation.phase]):close?'TELEPHOTO · TRACKING':'TRACKSIDE · CORNER',w-10,h-7);
  const shade=g.createLinearGradient(0,0,0,h);shade.addColorStop(0,'#10203222');shade.addColorStop(.5,'#10203200');shade.addColorStop(1,'#101a2c33');g.fillStyle=shade;g.fillRect(0,0,w,h);this.drawMap(r);this.drawTeamCar();
  }
  drawOvertakeVehicle(g,v,r,animation,w,h){const car=v.car,im=this.overtake[car.id];if(!im||!ready(im)){this.drawVehicle(g,v,r.time,animation.phase==='alongside');return;}
@@ -35,5 +35,5 @@ export class Broadcast {
  g.drawImage(im,0,frame*sourceH,im.naturalWidth,sourceH,x-width/2,y-height,width,height);g.restore();
  }
  drawTeamCar(){const canvas=document.getElementById('teamCar');if(!canvas)return;const g=canvas.getContext('2d'),im=this.angled[0];g.clearRect(0,0,canvas.width,canvas.height);if(!ready(im))return;const scale=Math.min((canvas.width-20)/im.naturalWidth,(canvas.height-8)/im.naturalHeight);const w=im.naturalWidth*scale,h=im.naturalHeight*scale;g.drawImage(im,(canvas.width-w)/2,(canvas.height-h)/2,w,h);}
- drawMap(r){const g=this.map.getContext('2d');g.clearRect(0,0,330,150);g.strokeStyle='#8795ad';g.lineWidth=9;g.beginPath();g.ellipse(165,75,129,52,0,0,7);g.stroke();for(const c of [...r.cars].reverse()){const p=location(c),x=165+p.x*1.17,y=75+p.z*.69;g.fillStyle=c.color;g.beginPath();g.arc(x,y,c.id===0?5:3.5,0,7);g.fill();g.font='bold 10px Arial';g.fillText(String(r.order.indexOf(c)+1),x+5,y-5);}}
+ drawMap(r){const g=this.map.getContext('2d');g.clearRect(0,0,330,150);g.strokeStyle='#8795ad';g.lineWidth=9;g.beginPath();g.ellipse(165,75,129,52,0,0,7);g.stroke();for(const c of [...r.cars].reverse()){const p=location(c),x=165+p.x*1.17,y=75+p.z*.69;g.fillStyle=c.color;g.beginPath();g.arc(x,y,c.id===0?5:3.5,0,7);g.fill();g.font='bold 10px PitCrew';g.fillText(String(r.order.indexOf(c)+1),x+5,y-5);}}
 }
