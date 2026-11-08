@@ -5,7 +5,7 @@ export const CREW = [
  {id:'sofia',name:'소피아',role:'전략 분석',x:430,y:250,h:450,layer:'rear',head:[.45,.15,.32]},
  {id:'olivia',name:'올리비아',role:'안전 관리',x:972,y:250,h:425,layer:'rear',head:[.45,.16,.34]},
  {id:'nari',name:'윤나리',role:'기계 점검',x:600,y:300,h:330,layer:'rear',head:[.50,.36,.42]},
- {id:'eunchae',name:'고은채',role:'휠 · 타이어',x:300,y:430,h:325,layer:'front',head:[.53,.38,.43]},
+ {id:'eunchae',name:'고은채',role:'휠 · 타이어',x:300,y:417,h:325,layer:'front',head:[.53,.38,.43]},
  {id:'leo',name:'레오',role:'잭 · 리프트',x:1170,y:367,h:380,layer:'front',head:[.45,.16,.39]},
 ];
 export const CAR={x:447,y:260,w:850,h:500,hub:{x:601,y:557},jack:{x:1035,y:716}};
@@ -48,15 +48,25 @@ export class GarageScene{
  if(pose)this.drawJack(pose,frames.leo);
  for(const c of CREW.filter(c=>c.layer==='front'))this.drawCrew(c,frames[c.id]);
  g.restore();this.drawLabels(phase,pose);canvas.dataset.phase=phase;canvas.dataset.loaded='true';canvas.dataset.step=pose?.id??phase;}
- drawWheel(pose,lift){const g=this.ctx;const draw=(x,y,scale=1)=>{const w=240*scale,h=w*this.wheel.height/this.wheel.width;g.drawImage(this.wheel,x-w*.662,y-h*.536,w,h);};
+ drawWheel(pose,lift){
+ const g=this.ctx;
+ // Keep the wheel's axle anchor and scale identical while it is detached.
+ const draw=(x,y)=>{const w=240,h=w*this.wheel.height/this.wheel.width;g.drawImage(this.wheel,x-w*.662,y-h*.536,w,h);};
  const hub={x:CAR.hub.x,y:CAR.hub.y-lift};
  if(!pose){draw(hub.x,hub.y);return;}
- const {id,t}=pose;
- // Removed wheel travels with the pulling hands, then rests on the floor.
- if(id==='remove'){const u=smooth(t);draw(hub.x-80*u,hub.y+44*u);return;}
- if(id==='replace'){const u=smooth(t);this.shadow(478,704,51,10,.22);draw(475,651,.80);draw(hub.x-80*(1-u),hub.y+44*(1-u));return;}
+ const pull={x:hub.x-64,y:hub.y+23};
+ const parked={x:505,y:650};
+ const between=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+ if(pose.id==='remove'){
+  const point=pose.t<.65?between(hub,pull,smooth(pose.t/.65)):between(pull,parked,smooth((pose.t-.65)/.35));
+  this.shadow(point.x-25,point.y+91,48,9,.28);draw(point.x,point.y);return;
+ }
+ if(pose.id==='replace'){
+  const point=between(parked,hub,smooth(pose.t));
+  this.shadow(point.x-25,point.y+91,48,9,.28);draw(point.x,point.y);return;
+ }
  draw(hub.x,hub.y);
- if(pose.progress>.53){this.shadow(478,704,51,10,.22);draw(475,651,.80);}
+ // Used tyres are not drawn a second time in front of the mechanic's knees.
  }
  drawJack(pose,frame){const g=this.ctx,c=CREW.find(c=>c.id==='leo');const anchors={2:[.23,.61],3:[.25,.67],4:[.20,.72],5:[.20,.72],6:[.25,.66],7:[.38,.56]};const hand=anchors[frame]||anchors[7];const hx=c.x+hand[0]*c.h,hy=c.y+hand[1]*c.h;
  const deployed=pose.progress<.90;if(!deployed)return;
