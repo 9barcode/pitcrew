@@ -1,11 +1,11 @@
 import {BOX,ENTRY,EXIT,LENGTH} from './simulation.js';
 // Coordinates are in the approved 1672 × 941 composition, independent of DPR.
 export const CREW = [
- {id:'sofia',name:'소피아',role:'전략 분석',x:418,y:234,h:670,layer:'rear'},
- {id:'olivia',name:'올리비아',role:'안전 관리',x:818,y:236,h:660,layer:'rear'},
- {id:'nari',name:'윤나리',role:'기계 점검 · 조정',x:600,y:350,h:330,layer:'rear'},
- {id:'eunchae',name:'고은채',role:'휠 · 타이어',x:248,y:440,h:322,layer:'front'},
- {id:'leo',name:'레오',role:'잭 · 리프트',x:1112,y:343,h:420,layer:'front'},
+ {id:'sofia',name:'소피아',role:'전략 분석',x:438,y:266,h:474,layer:'rear'},
+ {id:'olivia',name:'올리비아',role:'안전 관리',x:975,y:266,h:466,layer:'rear'},
+ {id:'nari',name:'윤나리',role:'기계 점검 · 조정',x:600,y:295,h:355,layer:'rear'},
+ {id:'eunchae',name:'고은채',role:'휠 · 타이어',x:284,y:420,h:330,layer:'front'},
+ {id:'leo',name:'레오',role:'잭 · 리프트',x:1175,y:380,h:370,layer:'front'},
 ];
 export function garagePhase(car) {
  if(car.state==='pit-entry') return 'ready';
@@ -31,18 +31,15 @@ export class GarageScene{
  // The garage cannot paint over navigation, timing, right panels or portrait cards.
  g.save();g.beginPath();g.moveTo(174,190);g.lineTo(1404,190);g.lineTo(1404,535);g.lineTo(1505,535);g.lineTo(1505,753);g.lineTo(174,753);g.closePath();g.clip();
  const p=race.player;const showCar=this.debug?phase!=='idle':p.state==='service'||p.state.startsWith('pit');
- g.save();if(showCar&&(this.debug||p.state==='service')){g.beginPath();g.rect(0,0,1672,941);g.rect(450,560,790,181);g.clip('evenodd');}
- for(const c of CREW.filter(c=>c.layer==='rear'))this.drawCrew(c,phase,age);g.restore();
+ for(const c of CREW.filter(c=>c.layer==='rear'))this.drawCrew(c,phase,age);
  // One authoritative order: rear people -> car -> contact forearms -> front people.
  if(showCar){let dx=0,alpha=1;if(!this.debug&&p.state==='pit-entry'){const remaining=(BOX-p.distance%LENGTH)/(BOX-ENTRY);dx=-Math.max(0,Math.min(1,remaining))*880;}if(!this.debug&&p.state==='pit-exit'){const progress=Math.max(0,Math.min(1,(p.distance%LENGTH-BOX)/(EXIT-BOX)));dx=progress*1100;alpha=1-progress;}
  const lift=phase==='work'?-7:phase==='lift-up'?-7*Math.min(1,age/.45):phase==='lift-down'?-7*(1-Math.min(1,age/.45)):0;
- g.save();g.translate(dx,0);g.globalAlpha=alpha;g.fillStyle='#11182750';g.beginPath();g.ellipse(846,724,380,19,0,0,Math.PI*2);g.fill();g.drawImage(this.car,447,410+lift,788,332);
- // Nari's upper arms/hands rest above the cockpit, never her legs. The contact
- // window follows the same car transform; it is not a duplicate whole person.
- if(this.debug||p.state==='service'){g.save();g.beginPath();g.rect(695,530+lift,271,48);g.clip();this.drawCrew(CREW.find(c=>c.id==='nari'),phase,age);g.restore();}g.restore();}
+ g.save();g.translate(dx,0);g.globalAlpha=alpha;g.fillStyle='#11182750';g.beginPath();g.ellipse(846,724,380,19,0,0,Math.PI*2);g.fill();g.drawImage(this.car,447,290+lift,850,850*this.car.height/this.car.width);
+ g.restore();}
  for(const c of CREW.filter(c=>c.layer==='front'))this.drawCrew(c,phase,age);
- g.restore();if(this.plate){g.drawImage(this.plate,438,726,1068,34,438,726,1068,34);g.drawImage(this.plate,628,703,412,24,628,703,412,24);}this.drawLabels(phase);canvas.dataset.phase=phase;canvas.dataset.loaded='true';}
+ g.restore();this.drawLabels(phase);canvas.dataset.phase=phase;canvas.dataset.loaded='true';}
  drawCrew(c,phase,time){const {meta,image}=this.assets[c.id];const clip=crewClip(c.id,phase);let f=frameIndex(meta,clip,time,CREW.indexOf(c)*.19);if(c.id==='olivia'){if(phase==='release')f=time<.18?3:time<.42?4:5;else if(phase!=='idle')f=2;}
  const rect=meta.frames[f],width=c.h*rect.w/rect.h;this.ctx.drawImage(image,rect.x,rect.y,rect.w,rect.h,c.x,c.y,width,c.h);}
- drawLabels(phase){const g=this.ctx;const labels=[['eunchae',435,415],['sofia',555,215],['nari',777,308],['olivia',1114,230],['leo',1274,350]];for(const [id,x,y]of labels){const c=CREW.find(c=>c.id===id),active=crewClip(id,phase)==='job_loop'||id==='olivia'&&phase==='release';g.fillStyle='#172132e8';g.strokeStyle=active?'#ffc655':'#a1aab7';g.lineWidth=active?3:1;g.beginPath();g.roundRect(x,y,124,67,9);g.fill();g.stroke();g.fillStyle='#f5f0e5';g.textAlign='center';g.font='bold 17px PitCrew';g.fillText(c.name,x+62,y+23);g.font='13px PitCrew';g.fillText(c.role,x+62,y+42);g.fillStyle=active?'#ffcd5a':'#87d26c';g.fillRect(x+19,y+51,86,6);}}
+ drawLabels(phase){const g=this.ctx;const labels=[['eunchae',295,400],['sofia',485,235],['nari',760,330],['olivia',1040,235],['leo',1260,350]];for(const [id,x,y]of labels){const c=CREW.find(c=>c.id===id),active=crewClip(id,phase)==='job_loop'||id==='olivia'&&phase==='release';g.fillStyle='#172132e8';g.strokeStyle=active?'#ffc655':'#a1aab7';g.lineWidth=active?3:1;g.beginPath();g.roundRect(x,y,124,67,9);g.fill();g.stroke();g.fillStyle='#f5f0e5';g.textAlign='center';g.font='bold 17px PitCrew';g.fillText(c.name,x+62,y+23);g.font='13px PitCrew';g.fillText(c.role,x+62,y+42);g.fillStyle=active?'#ffcd5a':'#87d26c';g.fillRect(x+19,y+51,86,6);}}
 }
