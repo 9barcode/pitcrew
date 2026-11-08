@@ -42,7 +42,7 @@ export class GarageScene{
  // The car faces down-left: arrive from the back-right and depart forwards.
  if(!this.debug&&p.state==='pit-entry'){const t=smooth((p.distance%LENGTH-ENTRY)/(BOX-ENTRY));x=(1-t)*970;y=-(1-t)*190;scale=.84+.16*t;}
  if(!this.debug&&p.state==='pit-exit'){const t=smooth((p.distance%LENGTH-BOX)/(EXIT-BOX));x=-t*1350;y=t*250;scale=1+.12*t;}
- g.save();g.translate(CAR.x+x,CAR.y+y);g.scale(scale,scale);g.translate(-CAR.x,-CAR.y);this.shadow(845,714,400,43,.42);const lift=(pose?.lift??0)*10;g.drawImage(this.car,CAR.x,CAR.y-lift,CAR.w,CAR.w*this.car.height/this.car.width);this.drawWheel(pose,lift);g.restore();
+ g.save();g.translate(CAR.x+x,CAR.y+y);g.scale(scale,scale);g.translate(-CAR.x,-CAR.y);this.shadow(845,690,330,30,.23);this.shadow(1108,690,65,12,.45);this.shadow(1252,631,42,9,.37);if(!pose||pose.wheelAttached)this.shadow(573,653,52,10,.4);const lift=(pose?.lift??0)*10;g.drawImage(this.car,CAR.x,CAR.y-lift,CAR.w,CAR.w*this.car.height/this.car.width);this.drawWheel(pose,lift);g.restore();
  if(pose){const c=CREW.find(c=>c.id==='nari');this.drawCrew(c,frames.nari,'arm');}
  }
  if(pose)this.drawJack(pose,frames.leo);
