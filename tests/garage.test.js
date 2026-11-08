@@ -9,8 +9,8 @@ test('garage follows actual service progression and each role acts at the correc
  assert.equal(crewClip('leo','lift-up'),'job_loop');assert.equal(crewClip('nari','work'),'job_loop');assert.equal(crewClip('eunchae','work'),'job_loop');assert.equal(crewClip('olivia','work'),'ready');assert.equal(crewClip('olivia','release'),'job_finish');
 });
 test('all five independent frame atlases have valid equal-size stable rectangles',async()=>{
- for(const crew of CREW){const m=JSON.parse(await readFile(new URL(`../assets/characters/${crew.id}/work.json`,import.meta.url)));assert.equal(m.frames.length,6);const bytes=await readFile(new URL('../'+m.image,import.meta.url));assert.equal(bytes.toString('ascii',0,4),'RIFF');for(const f of m.frames){assert.equal(f.w,m.frames[0].w);assert.equal(f.h,m.frames[0].h);assert.ok(f.x>=0&&f.y>=0);}
- for(const clip of Object.keys(m.clips)){for(let t=0;t<10;t+=.03){const f=frameIndex(m,clip,t);assert.ok(f>=0&&f<6);}}
+ for(const crew of CREW){const m=JSON.parse(await readFile(new URL(`../assets/characters/${crew.id}/service-v2.json`,import.meta.url)));assert.equal(m.frames.length,8);const bytes=await readFile(new URL('../'+m.image,import.meta.url));assert.equal(bytes.toString('ascii',0,4),'RIFF');for(const f of m.frames){assert.equal(f.w,m.frames[0].w);assert.equal(f.h,m.frames[0].h);assert.ok(f.x>=0&&f.y>=0);}
+ for(const clip of Object.keys(m.clips)){for(let t=0;t<10;t+=.03){const f=frameIndex(m,clip,t);assert.ok(f>=0&&f<m.frames.length);}}
  assert.notEqual(frameIndex(m,'job_loop',0),frameIndex(m,'job_loop',.2));
  }
 });
