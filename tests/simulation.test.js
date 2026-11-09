@@ -13,3 +13,51 @@ test('pit and finish shots cannot show an unrelated overtake',async()=>{const {H
 
 test('new overtake frames progress by actual separation and rank crosses at zero',async()=>{const {createOvertakeDemo,overtakeAnimation}=await import('../src/overtake-animation.js');const {Highlights}=await import('../src/highlights.js');const r=createOvertakeDemo(),h=new Highlights,seen=new Set;let oldGap=r.cars[1].distance-r.player.distance,crossed=false;for(let i=0;i<900;i++){r.step(1/60);const shot=h.select(r),a=overtakeAnimation(r,shot);if(a){seen.add(a.phase);assert.equal(a.targetId,1);assert.ok(a.frame>=0&&a.frame<3);const gap=r.cars[1].distance-r.player.distance;if(oldGap>=0&&gap<0){crossed=true;assert.ok(r.order.indexOf(r.player)<r.order.indexOf(r.cars[1]));assert.ok(r.passes.some(p=>p.carId===1&&p.direction==='overtake'));}oldGap=gap;}}assert.ok(crossed);assert.deepEqual([...seen],['approach','alongside','departure']);});
 test('unsupported opponents do not borrow blue comet artwork',async()=>{const {overtakeAnimation}=await import('../src/overtake-animation.js');const r=new Race;assert.equal(overtakeAnimation(r,{kind:'battle',ids:[0,2]}),null);});
+
+test('tyre compounds have different grip and distance-based wear',async()=>{
+ const {TYRES,tyreWear,tyrePerformance}=await import('../src/simulation.js');
+ assert.ok(TYRES.soft.pace>TYRES.medium.pace&&TYRES.medium.pace>TYRES.hard.pace);
+ assert.ok(tyreWear(500,'soft')>tyreWear(500,'medium'));
+ assert.ok(tyreWear(500,'medium')>tyreWear(500,'hard'));
+ assert.ok(tyreWear(500,'medium',true)>tyreWear(500,'medium',false));
+ assert.ok(tyrePerformance(.2)<tyrePerformance(.8));
+});
+test('distance rather than elapsed stationary time causes wear',()=>{
+ const r=new Race();r.requestPit();
+ while(r.player.state!=='service')r.step(1/60);
+ const before=r.player.tyre,distance=r.player.distance;
+ r.step(.4);
+ assert.equal(r.player.distance,distance);
+ assert.equal(r.player.tyre,before);
+});
+test('chosen replacement tyre resets wear and is applied at service completion',()=>{
+ const r=new Race();
+ assert.ok(r.setNextCompound('soft'));
+ assert.ok(r.requestPit());
+ while(r.player.state!=='service')r.step(1/60);
+ assert.equal(r.player.pitCompound,'soft');
+ const old=r.player.tyre;assert.ok(old<1);
+ while(r.player.state==='service')r.step(1/60);
+ assert.equal(r.player.compound,'soft');
+ assert.equal(r.player.tyre,1);
+ assert.equal(r.player.pitted,true);
+ assert.equal(r.setNextCompound('hard'),false);
+});
+test('manual early stop is allowed while automatic stop remains on lap two',()=>{
+ const early=new Race();early.requestPit();
+ while(early.player.state==='track')early.step(1/60);
+ assert.equal(early.player.state,'pit-entry');
+ assert.ok(early.player.distance<LENGTH);
+ const auto=new Race();
+ while(auto.player.state==='track')auto.step(1/60);
+ assert.equal(auto.player.state,'pit-entry');
+ assert.ok(auto.player.distance>LENGTH);
+});
+test('soft tyre is faster initially but wears faster than hard tyre',()=>{
+ const a=new Race(),b=new Race();
+ const soft=a.player,hard=b.player;
+ soft.compound='soft';hard.compound='hard';
+ for(let i=0;i<300;i++){a.step(1/60);b.step(1/60);}
+ assert.ok(soft.distance>hard.distance);
+ assert.ok(soft.tyre<hard.tyre);
+});

@@ -1,7 +1,7 @@
 import {servicePose} from './service-timeline.js';
 import {GarageScene} from './garage-scene.js';
 import {createOvertakeDemo} from './overtake-animation.js';
-import {Race,LENGTH,LAPS} from './simulation.js';import {Broadcast} from './renderer.js';
+import {Race,LENGTH,LAPS,TYRES,tyrePerformance} from './simulation.js';import {Broadcast} from './renderer.js';
 const $=id=>document.getElementById(id),view=new Broadcast($('race'),$('map'));let race=new Race,paused=false,speed=1,acc=0,last=0,uiClock=0,resultShown=false;
 const garage=new GarageScene($('garage')); garage.promise.then(()=>{$('assetStatus').textContent='';}).catch(()=>{});
 let debugPlaying=false,debugTime=0;
@@ -14,9 +14,15 @@ function reset(){garage.debug=null;$('debugPhase').value='live';race=new Race;pa
 $('stageSpeed').onclick=()=>$('speed').click();$('stageAuto').onclick=()=>$('pause').click();
 $('raceAction').onclick=()=>{reset();speed=1;$('speed').textContent='속도 ×1';};
 $('demo').onclick=()=>{reset();race=createOvertakeDemo();speed=1;$('speed').textContent='속도 ×1';update();};$('restart').onclick=reset;$('again').onclick=reset;$('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'계속하기':'일시정지';$('stageAuto').textContent=paused?'▶ 재생':'일시정지';};$('speed').onclick=()=>{speed=speed===4?1:speed*2;$('speed').textContent=`속도 ×${speed}`;};$('camera').onclick=()=>{view.highlights.targetId=null;$('camera').textContent='자동 하이라이트';};$('pit').onclick=()=>{race.requestPit();update();};$('delay').onclick=()=>{race.addDelay();update();};
+$('nextTyre').onchange=()=>{race.setNextCompound($('nextTyre').value);update();};
 function update(){$('stageSpeed').textContent=`▶ ×${speed}`;const c=race.player,lead=race.order[0];$('clock').textContent=format(race.time);$('lap').textContent=`LAP ${Math.min(LAPS,Math.floor(Math.max(0,c.distance)/LENGTH)+1)} / ${LAPS}`;$('rank').textContent=race.rank;
  const state={track:'본선 주행', 'pit-entry':'피트 진입 중',service:'피트 정비 중','pit-exit':'본선 합류 중',finished:'완주'}[c.state];$('raceState').textContent=`앰버 폭스 · ${state} · ${Math.round(c.speed*3.6)} km/h`;$('pitLabel').textContent=state;
- $('nextPitLabel').textContent=c.pitted?'의무 피트 완료':'다음 피트 · LAP 2';$('standings').innerHTML=race.order.map((o,i)=>{const gap=o===lead?'LEADER':o.finishTime!==null&&lead.finishTime!==null?`+${(o.finishTime-lead.finishTime).toFixed(2)}s`:`+${((lead.distance-o.distance)/Math.max(40,lead.speed)).toFixed(2)}s`;return `<div class="row ${o.id===0?'player':''}"><b>${i+1}</b><span>${o.name}</span><small>${o.state==='service'?'PIT':o.state==='finished'?'FIN':gap}</small></div>`;}).join('');
+ $('tyreStatus').textContent=`${TYRES[c.compound].label} · 잔여 ${Math.round(c.tyre*100)}% · 성능 ${Math.round(tyrePerformance(c.tyre)*100)}%`;
+ $('tyreWearFill').style.width=`${Math.round(c.tyre*100)}%`;
+ $('tyreWearFill').style.background=c.tyre<.3?'#e45d67':c.tyre<.55?'#eba84d':'#6bc9a0';
+ $('tyreAdvice').textContent=c.pitted?'타이어 교체 완료':c.tyre<.35?'마모 심각 · 피트 진입 권장':c.tyre<.55?'마모 진행 · 피트 타이밍 확인':'타이어 상태 양호';
+ $('nextTyre').value=race.nextCompound;$('nextTyre').disabled=c.pitted||c.state==='service'||c.state==='pit-exit'||race.done;
+ $('nextPitLabel').textContent=c.pitted?'의무 피트 완료':c.pitRequested?'피트 예약됨 · 다음 진입점':'다음 피트 · LAP 2';$('standings').innerHTML=race.order.map((o,i)=>{const gap=o===lead?'LEADER':o.finishTime!==null&&lead.finishTime!==null?`+${(o.finishTime-lead.finishTime).toFixed(2)}s`:`+${((lead.distance-o.distance)/Math.max(40,lead.speed)).toFixed(2)}s`;return `<div class="row ${o.id===0?'player':''}"><b>${i+1}</b><span>${o.name}</span><small>${o.state==='service'?'PIT':o.state==='finished'?'FIN':gap}</small></div>`;}).join('');
  const preview=garage.debug&&garage.pose;const servicing=!!preview||c.state==='service';const p=preview?preview.progress:c.state==='service'?Math.min(1,c.service/c.serviceTotal):c.pitted?1:0;
  let stage='피트 대기';if(servicing){const task=servicePose(p);stage=task.label;}else if(c.state!=='track')stage=state;else if(c.pitted)stage='정비 완료 · 레이스 진행';
  $('stage').textContent=stage;$('serviceClock').textContent=servicing?`${(preview?p*4.8:c.service).toFixed(2)} / ${(preview?4.8:c.serviceTotal).toFixed(2)} SEC`:c.pitted?`PIT RECORD · ${c.serviceTotal.toFixed(2)} SEC`:c.pitRequested?'PIT REQUEST CONFIRMED':'NEXT PIT · LAP 2';$('serviceBar').style.width=`${p*100}%`;
